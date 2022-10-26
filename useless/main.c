@@ -7,13 +7,17 @@
 
 int main(int argc, char *argv[], char *envp[])
 {    
-	FILE *f;
-	f = fopen(argv[1], "r");
-    
-	// if (fopen == failed)
-	// {
+	if (argc != 2){
+		perror("Wrong number of arguments");
+		return -1;
+	}
 
-	// }
+	FILE *f;
+	f = fopen(argv[1], "r");    
+	if (f == NULL) {
+		perror("File not found");
+		return -1;
+	}
 
 	char str[FILENAME_MAX];
 	int t = 0;
@@ -22,32 +26,30 @@ int main(int argc, char *argv[], char *envp[])
 	while(!feof(f))
 	{
 		fscanf(f, "%d %s", &t, str);
+		if (t < 0) perror("Wrong time");
 
-		// if (t < 0)
-        	// {
+		printf("Command \"%s\" will be executed with %dsec delay\n", str, t);
+	
+		pid_t pid = fork();
+		if (pid == -1) perror("Fork error");
 
-        	// }
+		switch(pid)
+		{
+			case -1:
+					perror("Fork error");
+					return -1;
+			case 0:
+				sleep(t);
+				printf("Child process %s started\n", str);
+				execlp(str, str, NULL);
 
-        	printf("Command \"%s\" will be executed with %dsec delay\n", str, t);
-	    
-        	pid_t pid = fork();
-        	switch(pid)
-        	{
-        	case -1:
-            		perror("fork");
-            		return -1;
-        	case 0:
-			sleep(t);
-            		printf("%s is executed\n", str);
-			execlp(str, str, NULL);
-
-			printf("\"%s\" failed!\n", str);
-			exit(EXIT_FAILURE);
-        	}
+				printf("\"%s\" failed!\n", str);
+				exit(EXIT_FAILURE);
+		}
 	}
 
    	while (wait(NULL) != -1) {};
 
-    	fclose(f);
-	return EXIT_SUCCESS;
+	fclose(f);
+	return 0;
 }
