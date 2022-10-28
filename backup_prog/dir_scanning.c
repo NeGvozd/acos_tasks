@@ -29,7 +29,8 @@ void scanDirectory(char* path, char* bpath)
     struct dirent* entry;
     while ((entry = readdir(dir)) != NULL)
     {
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+        if (strcmp(entry->d_name, ".") == 0 || 
+                strcmp(entry->d_name, "..") == 0)
             continue;
 
         char* file_path = updatePath(path, entry->d_name);
