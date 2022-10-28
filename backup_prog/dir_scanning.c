@@ -36,7 +36,17 @@ void scanDirectory(char* path, char* bpath)
         char* backup_path = updatePath(bpath, entry->d_name);
 
         if (entry->d_type != DT_DIR) {
-            backupController(file_path, backup_path);
+            pid_t pid = fork();
+            if (pid == 0) {
+                backupController(file_path, backup_path);
+                break;
+            }
+            if (pid == -1) {
+                printf("Error with fork\n");
+                exit(1);
+            }
+            
+            // backupController(file_path, backup_path);
             continue;
         }
         checkForDirExistence(backup_path);

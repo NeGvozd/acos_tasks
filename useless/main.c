@@ -25,8 +25,15 @@ int main(int argc, char *argv[], char *envp[])
 	
 	while(!feof(f))
 	{
-		fscanf(f, "%d %s", &t, str);
-		if (t < 0) perror("Wrong time");
+		int rs = fscanf(f, "%d %s", &t, str);
+		if (rs != 2) {
+			printf("Wrong format of file\n");
+			return -1;
+		}
+		if (t < 0) {
+			printf("Wrong time format\n");
+			return -1;
+		}
 
 		printf("Command \"%s\" will be executed with %dsec delay\n", str, t);
 	

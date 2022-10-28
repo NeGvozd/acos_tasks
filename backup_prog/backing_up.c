@@ -4,12 +4,16 @@
 bool isBackedUp(char* orig_file, char* backup_file)
 {
     struct stat original, backup;
-    stat(orig_file, &original);
+    if (stat(orig_file, &original) == -1) {
+        perror(orig_file);
+        return false;
+    }
 
     char* archived_path = strcpy(malloc(strlen(backup_file) + 4), backup_file);
-    stat(strcat(archived_path, ".gz"), &backup);
-
-    if (errno == ENOENT) return false; //Backup file doesn't exist
+    if (stat(strcat(archived_path, ".gz"), &backup) == -1) {
+        perror(backup_file);
+        return false;
+    }
 
     return original.st_mtime <= backup.st_mtime;
 }
@@ -27,12 +31,12 @@ void backupController(char* orig_path, char* backup_path)
 
 
 void gzip(char* file_path)
-{
-    pid_t pid = fork();
-    if (pid == 0)
-        execlp("gzip", "gzip", "-f", file_path, NULL);
-    if (pid <= -1)
-        perror("fork");
+{    
+    execlp("gzip", "gzip", "-f", file_path, NULL);
+    if (errno == ENOENT) {
+        printf("Error with gzip\n");
+        return;
+    }
 }
 
 
