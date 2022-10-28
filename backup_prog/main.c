@@ -1,5 +1,6 @@
-// #include "headers.h"
-#include "functions.c"
+#include "dir_scanning.h"
+#include <sys/types.h>
+#include <sys/stat.h>
 
 
 int main(int argc, char *argv[], char *envp[])
@@ -9,7 +10,6 @@ int main(int argc, char *argv[], char *envp[])
         return 1;
     }
 
-    printf("%s to %s\n", argv[1], argv[2]);
     mkdir(argv[2], 0777);
     scanDirectory(argv[1], argv[2]);
     return 0;
