@@ -34,9 +34,11 @@ void scanDirectory(char* path, char* bpath)
 
         char* file_path = updatePath(path, entry->d_name);
         char* backup_path = updatePath(bpath, entry->d_name);
+        int status;
 
         if (entry->d_type != DT_DIR) {
             pid_t pid = fork();
+            pid_t wpid;
             if (pid == 0) {
                 backupController(file_path, backup_path);
                 break;
@@ -46,6 +48,11 @@ void scanDirectory(char* path, char* bpath)
                 exit(1);
             }
             
+            wpid = wait(&status);
+            if (wpid == -1) {
+                printf("Error with wait\n");
+                exit(1);
+            }
             // backupController(file_path, backup_path);
             continue;
         }

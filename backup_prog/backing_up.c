@@ -11,8 +11,7 @@ bool isBackedUp(char* orig_file, char* backup_file)
 
     char* archived_path = strcpy(malloc(strlen(backup_file) + 4), backup_file);
     if (stat(strcat(archived_path, ".gz"), &backup) == -1) {
-        perror(backup_file);
-        return false;
+        return false; // file is not archived
     }
 
     return original.st_mtime <= backup.st_mtime;

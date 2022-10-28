@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <wait.h>
 #include "backing_up.h"
 
 // char* updatePath(char* path, char* name);
